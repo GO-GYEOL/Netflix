@@ -11,7 +11,7 @@ interface IRouterProps {
 function Router({}:IRouterProps ) {
   // 받은 props의 타입을 지정해줬다. 이 props는 App.tsx로부터 전달받았다. 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route path="/:coinId">
           <Coin/>
