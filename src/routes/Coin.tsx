@@ -13,6 +13,8 @@ import Chart from "./Chart";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { useQuery } from "react-query";
 import { Helmet } from "react-helmet";
+import { useRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -23,11 +25,18 @@ const Container = styled.div`
 const Header = styled.div`
   height: 10vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  flex-direction: column;
   margin-bottom: 10px;
   margin-top: 20px;
+
+  button {
+    width:50px;
+    height:50px;
+    font-size:24px;
+    border:none;
+    background-color:transparent;
+  }
 `;
 
 const Title = styled.h1`
@@ -159,13 +168,11 @@ interface PriceData {
   };
 }
 
-
-interface ICoinProps{
+interface ICoinProps {
   // isDark:boolean
 }
 
-
-function Coin({}:ICoinProps) {
+function Coin({}: ICoinProps) {
   // const {coinId} = useParams<{coinId:string}>();
   const { coinId } = useParams<RouteParams>();
   //   const location = useLocation();
@@ -212,6 +219,9 @@ function Coin({}:ICoinProps) {
   );
   // 여기서 useQuery에서 3개의 arg를 받는 방법도 알 수 있다. 5000ms마다 refetch(새로받아오기) 한다. 첫번째는 unique한 key, 두번째는 fetcher함수, 세번째는 refetchInterval
 
+  const [isDark, setIsDark] = useRecoilState(isDarkAtom)
+  const onClick = () => {setIsDark(curr => !curr)}
+
   const loading = infoLoading || tickersLoading;
   // && 여야하는거 아닌가?
   return (
@@ -224,22 +234,14 @@ function Coin({}:ICoinProps) {
       <Header>
         {/* <Title>코인 {coinId}</Title> */}
         {/* coinId를 써도 되지만, 지정된 이름이 좀 못생겼다. 그래서 Coins.tsx에서 state: { name: coin.name } 를 Coin.tsx로 보내서 사용하기로 했다. */}
+        <button><Link to="/">🔚</Link></button>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+          {/* 근데 이렇게하면 Home 페이지를 거치지 않고 바로 링크를 타고 들어올 경우 state.name 데이터가 존재하지 않게되어 오류가 난다. 그래서 ?찍어줌. 삼항연산자. */}
+          {/* 방법 약간 바뀜. 홈페이지를 통해 와서 state가 있으면 state.name 찍어주고, state가 없다면, 그리고 loading이 true면 loading, false면 info.name을 찍어준다.  */}
         </Title>
-        <Overview
-          style={{
-            padding: "5px 20px",
-            fontSize: "10px",
-            marginTop:"5px"
-          }}
-        >
-          <Link to="/">Go back</Link>
-        </Overview>
-        {/* 근데 이렇게하면 Home 페이지를 거치지 않고 바로 링크를 타고 들어올 경우 state.name 데이터가 존재하지 않게되어 오류가 난다. 그래서 ?찍어줌. 삼항연산자. */}
-        {/* 방법 약간 바뀜. 홈페이지를 통해 와서 state가 있으면 state.name 찍어주고, state가 없다면, 그리고 loading이 true면 loading, false면 info.name을 찍어준다.  */}
+        <button onClick={onClick}> {isDark ? "🌞" : "🌚"} </button>
       </Header>
-
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
@@ -286,7 +288,7 @@ function Coin({}:ICoinProps) {
 
           <Switch>
             <Route path={`/${coinId}/price`}>
-              <Price coinId={coinId}/>
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
               <Chart coinId={coinId} />

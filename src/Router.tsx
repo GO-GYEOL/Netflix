@@ -11,7 +11,8 @@ interface IRouterProps {
 function Router({}:IRouterProps ) {
   // 받은 props의 타입을 지정해줬다. 이 props는 App.tsx로부터 전달받았다. 
   return (
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
+    // basename 지정해야된다. 안하면 homepage에 넣어준 주소 즉 CRYPTO-TRACKER 가 coinId로 받아져서 계속 json을 엉뚱한 곳에서 불러오게된다.
+    <BrowserRouter basename={process.env.PUBLIC_URL}>  
       <Switch>
         <Route path="/:coinId">
           <Coin/>
