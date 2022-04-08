@@ -5,6 +5,8 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
 import {useState} from "react"
+import { isDarkAtom } from "./atoms";
+import { useRecoilValue } from "recoil";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -71,15 +73,16 @@ a {
 `;
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
-  const toggleDark = () => setIsDark(current => !current)
+  // const [isDark, setIsDark] = useState(true);
+  // const toggleDark = () => setIsDark(current => !current)
+  // 만약 리코일 없다면 이렇게 해서 원하는 컴포넌트까지 props 계속 전달해줘야한다. 이 부분  5.1~5.2
+  const isDark = useRecoilValue(isDarkAtom)
   return (
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <button onClick={toggleDark}>Toggle Mode</button>
         {/* ThemProvider를 index.ts에서 App.tsx로 옮겼다. state를 사용하기 위해서 */}
         <GlobalStyle />
-        <Router />
+        <Router/>
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>
     </>
@@ -87,3 +90,22 @@ function App() {
 }
 
 export default App;
+
+
+// global state란 이런 것이다.
+// App(isDark, modifierFn)
+//   -> Router -> Coins (modifier)
+//   -> Router -> Coin -> Chart (isDark)
+// 즉,
+// isDark : App -> Router -> Coin -> Chart
+// toggleDark : App -> Router -> Coins
+
+
+// 만약 state management를 사용한다면?
+// 위처럼 부모가 자식에게 prop을 내려주는 계층 구조 대신에
+
+// Header -> (isDark) <- Chart
+// state를 어떤 비눗방울 안에 넣고, chart가 접근할 수 있도록 한다. Header도 접근할 수 있다. App.js에서도 마찬가지로 접근할 수 있다. 
+
+// 근데 themeProvider에서는 맨 위 컴포넌트에 주니 다른 컴포넌트들 다 props로 받을 수 있었는데?
+

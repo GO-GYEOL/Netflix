@@ -159,7 +159,13 @@ interface PriceData {
   };
 }
 
-function Coin() {
+
+interface ICoinProps{
+  // isDark:boolean
+}
+
+
+function Coin({}:ICoinProps) {
   // const {coinId} = useParams<{coinId:string}>();
   const { coinId } = useParams<RouteParams>();
   //   const location = useLocation();

@@ -70,7 +70,14 @@ interface ICoin {
   type: string;
 }
 
-function Coins() {
+interface ICoinsProps {
+  // toggleDark : ()=>void;
+}
+
+
+
+function Coins({}:ICoinsProps) {
+  // toggleDark 함수를 Router.tsx에서 파라미터로 전달받았다.
   const {isLoading, data} = useQuery<ICoin[]>("allCoins", fetchCoins)
   // useQuery 두개의 arguments 갖는다. 고유한 key와 fetcher함수.
   // isLoading에서 fetcher함수가 끝났는지 안끝났는지 알려주고, 끝났으면 그 데이터를 data에 넣어준다. ㄷㄷ 그러니까 fetch,async,response,json,setCoins,setLoading을 생략한거다. 

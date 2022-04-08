@@ -1,10 +1,9 @@
 import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
 import ApexChart from "react-apexcharts";
+import { isDarkAtom } from "../atoms";
+import { useRecoilValue } from "recoil";
 
-interface ChartProps {
-  coinId: string;
-}
 interface IHistorical {
   time_open: string;
   time_close: string;
@@ -15,6 +14,12 @@ interface IHistorical {
   volume: number;
   market_cap: number;
 }
+
+interface ChartProps {
+  coinId: string;
+  // isDark:boolean;
+}
+
 function Chart({ coinId }: ChartProps) {
   // props를 이렇게 받을 수 있다. 뒤에는 interface
   const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
@@ -29,6 +34,8 @@ function Chart({ coinId }: ChartProps) {
 //       return { x: x, y: y };
 //     });
 //   };
+const isDark = useRecoilValue(isDarkAtom);
+
 
   return (
     <div>
@@ -56,7 +63,7 @@ function Chart({ coinId }: ChartProps) {
           
           options={{
             theme: {
-              mode: "dark",
+              mode:  isDark ?  "dark" : "light",
             },
             chart: {
               height: 300,
